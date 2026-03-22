@@ -1,4 +1,5 @@
-﻿using Logic;
+﻿using Data;
+using Logic;
 
 namespace Tests
 {
@@ -8,11 +9,11 @@ namespace Tests
         [TestMethod]
         public void CreateBalls_AmountOfBalls() //Sprawdzamy czy poprawnie generowana jest liczba kul
         {
-            var logic = new LogicApi();
+            LogicApi logic = new LogicApi();
             int expectedNum = 5;
-            var result = logic.CreateBalls(expectedNum);
+            List<Ball> result = logic.CreateBalls(expectedNum);
             Assert.IsNotNull(result); // czy lista nie jest pusta
-            Assert.AreEqual(expectedNum, result.Count); //czy stworzyło 5 kul
+            Assert.HasCount(expectedNum, result); //czy stworzyło 5 kul
         }
         [TestMethod]
         public void CreateBalls_CorrectRadius() //Sprawdzamy czy promień kul jest poprawny
