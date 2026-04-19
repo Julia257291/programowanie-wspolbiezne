@@ -23,6 +23,8 @@ namespace Presentation.ViewModel
             get => _ballsCount;
             set
             {
+                if (value < 0) return;
+
                 _ballsCount = value;
                 OnPropertyChanged();
             }

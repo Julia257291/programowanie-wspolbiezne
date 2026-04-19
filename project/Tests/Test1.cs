@@ -1,27 +1,47 @@
 ﻿using Data;
 using Logic;
 
-namespace Tests
+[TestClass]
+public class LogicApiTests
 {
-    [TestClass]
-    public class LogicApiTests
+    [TestMethod]
+    public void GenerateBalls_AmountOfBalls()
     {
-        [TestMethod]
-        public void CreateBalls_AmountOfBalls() //Sprawdzamy czy poprawnie generowana jest liczba kul
+        LogicAbstractApi logic = LogicAbstractApi.CreateApi();
+        int expectedNum = 5;
+
+        logic.GenerateBalls(expectedNum, 100, 100);
+
+        List<Ball> result = logic.GetBalls();
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(expectedNum, result.Count); 
+    }
+
+    [TestMethod]
+    public void GenerateBalls_CorrectRadius()
+    {
+        var logic = LogicAbstractApi.CreateApi();
+        logic.GenerateBalls(1, 100, 100);
+        var result = logic.GetBalls();
+
+        Assert.IsTrue(result.Count > 0);
+        Assert.AreEqual(10, result[0].Radius);
+    }
+
+    [TestMethod]
+    public void GenerateBalls_BallsWithinBounds()
+    {
+        var logic = LogicAbstractApi.CreateApi();
+        double maxX = 100;
+        double maxY = 100;
+        logic.GenerateBalls(10, maxX, maxY);
+        var balls = logic.GetBalls();
+
+        foreach (var ball in balls)
         {
-            LogicApi logic = new LogicApi();
-            int expectedNum = 5;
-            List<Ball> result = logic.CreateBalls(expectedNum);
-            Assert.IsNotNull(result); // czy lista nie jest pusta
-            Assert.HasCount(expectedNum, result); //czy stworzyło 5 kul
-        }
-        [TestMethod]
-        public void CreateBalls_CorrectRadius() //Sprawdzamy czy promień kul jest poprawny
-        {
-            var logic = new LogicApi();
-            var result = logic.CreateBalls(1);
-            Assert.IsTrue(result.Count > 0);
-            Assert.AreEqual(10, result[0].Radius); // Sprawdzamy promień pierwszej kuli na liście
+            Assert.IsTrue(ball.X >= 0 && ball.X <= maxX - ball.Radius, "Ball X out of bounds");
+            Assert.IsTrue(ball.Y >= 0 && ball.Y <= maxY - ball.Radius, "Ball Y out of bounds");
         }
     }
 }
