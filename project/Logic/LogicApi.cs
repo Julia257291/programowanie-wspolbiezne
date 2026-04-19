@@ -2,16 +2,24 @@
 
 namespace Logic
 {
-    public class LogicApi
+    internal class LogicApi : LogicAbstractApi
     {
-        public List<Ball> CreateBalls(int count)
+        private readonly DataAbstractApi _dataApi;
+        public LogicApi(DataAbstractApi dataApi)
         {
-            List<Ball> balls = new List<Ball>();
-            for (int i = 0; i < count; i++)
-            {
-                balls.Add(new Ball { X = i * 15, Y = i * 15, Radius = 10 });
-            }
-            return balls;
+            _dataApi = dataApi;
+        }
+        public override void GenerateBalls(int count, double maxX, double maxY)
+        {
+            _dataApi.CreateBalls(count, maxX, maxY);
+        }
+        public override List<Ball> GetBalls()
+        {
+            return _dataApi.GetBalls();
+        }
+        public override void StartSimulation()
+        {
+            // Tutaj można dodać logikę symulacji ruchu kul, np. aktualizację pozycji kul na podstawie ich prędkości
         }
     }
 }
