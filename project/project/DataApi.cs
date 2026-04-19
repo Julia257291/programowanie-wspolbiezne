@@ -18,8 +18,10 @@ namespace Data
                 var ball = new Ball
                 {
                     X = _random.NextDouble() * (maxX - radius), //NextDouble() zwraca wartość z zakresu [0.0, 1.0)
-                    Y = _random.NextDouble() * (maxY-radius ),
-                    Radius = radius
+                    Y = _random.NextDouble() * (maxY - radius),
+                    Radius = radius,
+                    VelX = (_random.NextDouble() * 2 - 1) * 2, 
+                    VelY = (_random.NextDouble() * 2 - 1) * 2
                 };
                 _balls.Add(ball);
             }

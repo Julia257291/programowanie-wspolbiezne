@@ -15,12 +15,19 @@ namespace Data
             set { _y = value; OnPropertyChanged(); } 
         } //oś Y
         public double Radius { get; set; } //promień - wielkość
+        public double VelX { get; set; } // Prędkość pozioma
+        public double VelY { get; set; } // Prędkość pionowa
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }   
+        public void Move()
+        {
+            X += VelX;
+            Y += VelY;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -11,6 +12,25 @@ namespace Presentation.Model
         private double _x;
         private double _y;
         private double _radius;
+
+        public BallModel(Ball ball)
+        {
+            this._x = ball.X;
+            this._y = ball.Y;
+            this._radius = ball.Radius;
+
+            ball.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == nameof(ball.X))
+                {
+                    this.X = ball.X;
+                }
+                else if (args.PropertyName == nameof(ball.Y))
+                {
+                    this.Y = ball.Y;
+                }
+            };
+        }
 
         public double X
         {
