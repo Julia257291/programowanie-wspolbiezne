@@ -21,11 +21,11 @@ namespace Data
         } //oś Y
         public double Radius { get; set; } //promień - wielkość
         public double VelX {
-            get { lock (_velocityLock) { return _velX; } },
+            get { lock (_velocityLock) { return _velX; } }
             set { lock (_velocityLock) { _velX = value; } }
         } // Prędkość pozioma
         public double VelY {
-            get { lock (_velocityLock) { return _velY; } },
+            get { lock (_velocityLock) { return _velY; } }
             set { lock (_velocityLock) { _velY = value; } }
         } // Prędkość pionowa
         //Lock tworzy sekcję krytyczną więc wątki nie będą się nawzajem blokować podczas odczytu i zapisu prędkości
