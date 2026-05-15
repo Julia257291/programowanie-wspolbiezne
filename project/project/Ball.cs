@@ -13,11 +13,15 @@ namespace Data
         public double Mass { get; set; }
 
         //Kiedy x zostaje zmieniony, wywołujemy OnPropertyChanged, aby powiadomić UI o zmianie
-        public double X { get { return _x; }
-            set { _x = value;  OnPropertyChanged(); } 
+        public double X { get => _x;
+            set { if (_x == value) return;
+                _x = value;
+                OnPropertyChanged(); } 
         } //oś X
-        public double Y { get { return _y; }
-            set { _y = value; OnPropertyChanged(); } 
+        public double Y { get => _y;
+            set { if (_y == value) return;
+                _y = value;
+                OnPropertyChanged(); } 
         } //oś Y
         public double Radius { get; set; } //promień - wielkość
         public double VelX {
@@ -30,7 +34,7 @@ namespace Data
         } // Prędkość pionowa
         //Lock tworzy sekcję krytyczną więc wątki nie będą się nawzajem blokować podczas odczytu i zapisu prędkości
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
         {

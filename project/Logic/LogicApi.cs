@@ -26,7 +26,7 @@ namespace Logic
             }
         }
 
-        private void Ball_PositionedChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Ball_PositionedChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Ball.X) || e.PropertyName == nameof(Ball.Y))
             {
@@ -37,11 +37,11 @@ namespace Logic
                 lock (_collisionLock)
                 {
                     // Odbicia od ścian
-                    if (ball.X <= 0) { ball.VelX = Math.Abs(ball.VelX); }
-                    else if (ball.X + ball.Radius >= _width) { ball.VelX = -Math.Abs(ball.VelX); }
+                    if (ball.X <= 0) { ball.X = 0; ball.VelX = Math.Abs(ball.VelX); }
+                    else if (ball.X + ball.Radius >= _width) { ball.X = _width - ball.Radius; ball.VelX = -Math.Abs(ball.VelX); }
 
-                    if (ball.Y <= 0) { ball.VelY = Math.Abs(ball.VelY); }
-                    else if (ball.Y + ball.Radius >= _height) { ball.VelY = -Math.Abs(ball.VelY); }
+                    if (ball.Y <= 0) { ball.Y = 0; ball.VelY = Math.Abs(ball.VelY); }
+                    else if (ball.Y + ball.Radius >= _height) { ball.Y = _height - ball.Radius; ball.VelY = -Math.Abs(ball.VelY); }
 
                     // Odbicia od innych kul
                     CheckBallCollision(ball);
@@ -71,6 +71,18 @@ namespace Logic
                     other.VelX = ((other.Mass - ball.Mass) * other.VelX + 2 * ball.Mass * oldVelX) / (ball.Mass + other.Mass);
                     other.VelY = ((other.Mass - ball.Mass) * other.VelY + 2 * ball.Mass * oldVelY) / (ball.Mass + other.Mass);
                 }
+            }
+        }
+
+        public override void StartSimulation()
+        {
+            //Kulki same poruszają się w swoich metodach StartMoving, więc tutaj nie musimy nic robić
+        }
+        public override void StopSimulation()
+        {
+            foreach (var ball in _dataApi.GetBalls())
+            {
+                ball.StopMoving(); // zatrzyma pętle while w klasie Ball
             }
         }
         public override List<Ball> GetBalls()

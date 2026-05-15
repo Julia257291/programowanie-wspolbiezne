@@ -44,4 +44,19 @@ public class LogicApiTests
             Assert.IsTrue(ball.Y >= 0 && ball.Y <= maxY - ball.Radius, "Ball Y out of bounds");
         }
     }
+    [TestMethod]
+    public void Ball_ShouldNotLeaveBounds()
+    {
+        var logic = LogicAbstractApi.CreateApi();
+        double width = 100;
+        double height = 100;
+        logic.GenerateBalls(1, width, height);
+        var ball = logic.GetBalls()[0];
+
+        // Ustawiamy kulę na krawędzi z prędkością skierowaną na ścianę
+        ball.X = 95;
+        ball.VelX = 10;
+        Thread.Sleep(50); // Czekamy na ruch
+        Assert.IsTrue(ball.X + ball.Radius <= width, "Kula wyszła poza prawą krawędź!");
+    }
 }
