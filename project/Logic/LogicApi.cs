@@ -54,14 +54,26 @@ namespace Logic
             {
                 if (other == ball) continue; // Nie sprawdzamy kolizji samej ze sobą
 
+                double BallCenterX = ball.X + ball.Radius;
+                double BallCenterY = ball.Y + ball.Radius;
+                double OtherCenterX = other.X + other.Radius;
+                double OtherCenterY = other.Y + other.Radius;
+
                 // Obliczamy odległość między środkami kul (Twierdzenie Pitagorasa)
-                double dx = (ball.X + ball.Radius / 2) - (other.X + other.Radius / 2);
-                double dy = (ball.Y + ball.Radius / 2) - (other.Y + other.Radius / 2);
+                double dx = BallCenterX - OtherCenterX;
+                double dy = BallCenterY - OtherCenterY;
                 double distance = Math.Sqrt(dx * dx + dy * dy);
 
                 // Jeśli odległość jest mniejsza lub równa sumie promieni, to kulki się stykają
-                if (distance <= (ball.Radius / 2 + other.Radius / 2))
+                if (distance <= (ball.Radius / 2+ other.Radius / 2))
                 {
+                    // Sprawdzamy prędkość względną - ochrona przed wrażeniem sklejania się kul
+                    double relativeVelX = ball.VelX - other.VelX;
+                    double relativeVelY = ball.VelY - other.VelY;
+
+                    // Jeśli kule już się od siebie oddalają, nie licz kolizji ponownie
+                    if ((dx * relativeVelX + dy * relativeVelY) >= 0) continue;
+
                     // m1v1 + m2v2 = m1v1' + m2v2' - zasada zachowania pędu, masa się nie zmienia
                     double oldVelX = ball.VelX;
                     double oldVelY = ball.VelY;
