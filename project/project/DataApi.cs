@@ -32,8 +32,8 @@ namespace Data
         }
 
         public override List<Ball> GetBalls()
-        {
-            return _balls;
+        { 
+            return new List<Ball>(_balls);
         }
     }
 }

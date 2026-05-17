@@ -37,11 +37,11 @@ namespace Logic
                 lock (_collisionLock)
                 {
                     // Odbicia od ścian
-                    if (ball.X <= 0) { ball.X = 0; ball.VelX = Math.Abs(ball.VelX); }
-                    else if (ball.X + ball.Radius >= _width) { ball.X = _width - ball.Radius; ball.VelX = -Math.Abs(ball.VelX); }
+                    if (ball.X <= 0) { ball.VelX = Math.Abs(ball.VelX); }
+                    else if (ball.X + ball.Radius >= _width) { ball.VelX = -Math.Abs(ball.VelX); }
 
-                    if (ball.Y <= 0) { ball.Y = 0; ball.VelY = Math.Abs(ball.VelY); }
-                    else if (ball.Y + ball.Radius >= _height) { ball.Y = _height - ball.Radius; ball.VelY = -Math.Abs(ball.VelY); }
+                    if (ball.Y <= 0) { ball.VelY = Math.Abs(ball.VelY); }
+                    else if (ball.Y + ball.Radius >= _height) { ball.VelY = -Math.Abs(ball.VelY); }
 
                     // Odbicia od innych kul
                     CheckBallCollision(ball);
