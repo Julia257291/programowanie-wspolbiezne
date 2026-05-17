@@ -11,6 +11,7 @@ namespace Logic
         public abstract void StartSimulation(); //obsługa ruchu kul
         public abstract void StopSimulation();
         public abstract void GenerateBalls(int count, double maxX, double maxY); //metoda do generowania kul
+        public abstract void UpdateBoardSize(double width, double height);
 
         public static LogicAbstractApi CreateApi(DataAbstractApi dataApi = null)
         {

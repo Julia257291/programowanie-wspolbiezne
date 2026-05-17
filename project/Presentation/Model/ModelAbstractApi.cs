@@ -12,6 +12,7 @@ namespace Presentation.Model
         public abstract void CreateBalls(int count);
         public abstract void StartSimulation();
         public abstract void StopSimulation();
+        public abstract void UpdateBoardSize(double width, double height);
 
         public static ModelAbstractApi CreateApi(LogicAbstractApi logicApi = null)
         {

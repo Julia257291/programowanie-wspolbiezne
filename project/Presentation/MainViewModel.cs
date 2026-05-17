@@ -59,5 +59,10 @@ namespace Presentation.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        public void UpdateCanvasSize(double width, double height)
+        {
+            _modelApi.UpdateBoardSize(width, height);
+        }
     }
 }

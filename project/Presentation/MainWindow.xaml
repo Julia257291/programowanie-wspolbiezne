@@ -21,7 +21,7 @@
         </StackPanel>
 
         <Border BorderBrush="Black" BorderThickness="2" Margin="10">
-            <ItemsControl ItemsSource="{Binding Balls}">
+            <ItemsControl ItemsSource="{Binding Balls}" SizeChanged="ItemsControl_SizeChanged">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas Background="White" ClipToBounds="True"/>
@@ -30,19 +30,19 @@
 
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding X}" />
-                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                        <Setter Property="Canvas.Left" Value="{Binding RenderX}" />
+                        <Setter Property="Canvas.Top" Value="{Binding RenderY}" />
                     </Style>
                 </ItemsControl.ItemContainerStyle>
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Ellipse 
-                            Width="{Binding Radius}" 
-                            Height="{Binding Radius}"
-                            Fill="Red"
-                            Stroke="Black"
-                            StrokeThickness="1"/>
+                Width="{Binding Diameter}" 
+                Height="{Binding Diameter}"
+                Fill="Red"
+                Stroke="Black"
+                StrokeThickness="1"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

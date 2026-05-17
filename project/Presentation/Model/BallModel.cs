@@ -1,9 +1,6 @@
 ﻿using Data;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Presentation.Model
 {
@@ -35,22 +32,42 @@ namespace Presentation.Model
         public double X
         {
             get => _x;
-            set { _x = value; OnPropertyChanged(); }
+            set
+            {
+                _x = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(RenderX)); 
+            }
         }
 
         public double Y
         {
             get => _y;
-            set { _y = value; OnPropertyChanged(); }
+            set
+            {
+                _y = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(RenderY));
+            }
         }
 
         public double Radius
         {
             get => _radius;
-            set { _radius = value; OnPropertyChanged(); }
+            set
+            {
+                _radius = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Diameter));
+            }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        // Dane do bindowania w XAML:
+        public double Diameter => _radius * 2;
+        public double RenderX => _x;
+        public double RenderY => _y;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

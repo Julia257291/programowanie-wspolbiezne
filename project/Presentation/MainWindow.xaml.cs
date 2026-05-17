@@ -21,5 +21,12 @@ namespace Presentation
             InitializeComponent();
             DataContext = new ViewModel.MainViewModel();
         }
+        private void ItemsControl_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
+        {
+            if (DataContext is ViewModel.MainViewModel viewModel)
+            {
+                viewModel.UpdateCanvasSize(e.NewSize.Width, e.NewSize.Height);
+            }
+        }
     }
 }
