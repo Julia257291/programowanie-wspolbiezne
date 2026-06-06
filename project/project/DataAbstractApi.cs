@@ -10,6 +10,7 @@ namespace Data
         public abstract void CreateBalls(int count, double maxX, double maxY);
         public abstract List<Ball> GetBalls(); //metoda do pobierania kul w logice, żeby można było je potem wyświetlić
 
+        public abstract void StopLogging();
         public static DataAbstractApi CreateApi()
         {
             return new DataApi();

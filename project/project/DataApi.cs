@@ -9,6 +9,9 @@ namespace Data
         private readonly List<Ball> _balls = new List<Ball>();
         private readonly Random _random = new Random();
 
+        private readonly Logger _logger = new Logger();
+        private bool _isSimulating = false;
+
         public override void CreateBalls(int count, double maxX, double maxY)
         {
             _balls.Clear();
@@ -29,11 +32,31 @@ namespace Data
                 _ = ball.StartMoving(); //discard, ponieważ metoda StartMoving jest asynchroniczna
                                         //ale nie potrzebujemy jej wyniku tutaj
             }
+            if (!_isSimulating)
+            {
+                _isSimulating = true;
+                _ = Task.Run(LogDataPeriodically);
+            }
         }
 
         public override List<Ball> GetBalls()
         { 
             return new List<Ball>(_balls);
         }
+
+        public override void StopLogging()
+        {
+            _isSimulating = false;
+            _logger.StopLogging();
+        }
+        private async Task LogDataPeriodically()
+        {
+            while (_isSimulating)
+            {
+                _logger.Log(_balls);
+                await Task.Delay(100);
+            }
+        }
+
     }
 }

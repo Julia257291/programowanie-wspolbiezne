@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Data
 {
@@ -69,13 +70,21 @@ namespace Data
         public async Task StartMoving()
         {
             _isMoving = true;
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             while (_isMoving)
             {
+                stopwatch.Stop();
+                double deltaTime = stopwatch.ElapsedMilliseconds / 1000.0;
+                stopwatch.Restart();
+
                 // Aktualizacja pozycji musi być operacją atomową wewnątrz locka
                 lock (_stateLock)
                 {
-                    _x += _velX;
-                    _y += _velY;
+                    _x += _velX * deltaTime * 100;
+                    _y += _velY * deltaTime * 100; //mnożnik 100, aby prędkość była bardziej zauważalna
                 }
 
                 // Wywołanie zdarzenia POZA lockiem - kluczowe, aby uniknąć zakleszczeń (Deadlocks)

@@ -120,6 +120,8 @@ namespace Logic
             {
                 ball.StopMoving(); // zatrzyma pętle while w klasie Ball
             }
+
+            _dataApi.StopLogging();
         }
         public override List<Ball> GetBalls()
         {
