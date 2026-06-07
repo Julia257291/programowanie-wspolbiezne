@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Data
 {
@@ -12,26 +13,31 @@ namespace Data
         private readonly Logger _logger = new Logger();
         private bool _isSimulating = false;
 
+        private readonly object _ballsLock = new object();
+
         public override void CreateBalls(int count, double maxX, double maxY)
         {
-            _balls.Clear();
-            for (int i = 0; i < count; i++)
+            lock (_ballsLock)
             {
-                double radius = 10.0;
-                double mass = _random.NextDouble() * 4 + 1; // Masa w zakresie [1, 5]
-                var ball = new Ball
+                _balls.Clear();
+                for (int i = 0; i < count; i++)
                 {
-                    X = _random.NextDouble() * (maxX - radius), //NextDouble() zwraca wartość z zakresu [0.0, 1.0)
-                    Y = _random.NextDouble() * (maxY - radius),
-                    Radius = radius,
-                    Mass = mass,
-                    VelX = (_random.NextDouble() * 2 - 1) * 2, 
-                    VelY = (_random.NextDouble() * 2 - 1) * 2
-                };
-                _balls.Add(ball);
-                _ = ball.StartMoving(); //discard, ponieważ metoda StartMoving jest asynchroniczna
-                                        //ale nie potrzebujemy jej wyniku tutaj
+                    double radius = 10.0;
+                    double mass = _random.NextDouble() * 4 + 1; // Masa w zakresie [1, 5]
+                    var ball = new Ball
+                    {
+                        X = _random.NextDouble() * (maxX - radius),
+                        Y = _random.NextDouble() * (maxY - radius),
+                        Radius = radius,
+                        Mass = mass,
+                        VelX = (_random.NextDouble() * 2 - 1) * 2,
+                        VelY = (_random.NextDouble() * 2 - 1) * 2
+                    };
+                    _balls.Add(ball);
+                    _ = ball.StartMoving();
+                }
             }
+
             if (!_isSimulating)
             {
                 _isSimulating = true;
@@ -39,9 +45,12 @@ namespace Data
             }
         }
 
-        public override List<Ball> GetBalls()
-        { 
-            return new List<Ball>(_balls);
+        public override IList<IBall> GetBalls()
+        {
+            lock (_ballsLock)
+            {
+                return _balls.Cast<IBall>().ToList();
+            }
         }
 
         public override void StopLogging()
@@ -49,14 +58,21 @@ namespace Data
             _isSimulating = false;
             _logger.StopLogging();
         }
+
         private async Task LogDataPeriodically()
         {
             while (_isSimulating)
             {
-                _logger.Log(_balls);
+                List<Ball> ballsSnapshot;
+
+                lock (_ballsLock)
+                {
+                    ballsSnapshot = new List<Ball>(_balls);
+                }
+
+                _logger.Log(ballsSnapshot);
                 await Task.Delay(100);
             }
         }
-
     }
 }

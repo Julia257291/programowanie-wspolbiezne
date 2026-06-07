@@ -1,5 +1,7 @@
 ﻿using Data;
-using System.Timers;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Logic
 {
@@ -10,19 +12,38 @@ namespace Logic
         private double _width;
         private double _height;
         private readonly object _collisionLock = new object();
+
+        private IList<IBall> _currentBalls = new List<IBall>();
+
         public LogicApi(DataAbstractApi dataApi)
         {
             _dataApi = dataApi;
         }
+
         public override void GenerateBalls(int count, double maxX, double maxY)
         {
             _width = maxX;
             _height = maxY;
-            _dataApi.CreateBalls(count, maxX, maxY);
 
-            foreach (var ball in _dataApi.GetBalls())
+            UnsubscribeFromBalls();
+
+            _dataApi.CreateBalls(count, maxX, maxY);
+            _currentBalls = _dataApi.GetBalls();
+
+            foreach (var ball in _currentBalls)
             {
                 ball.PropertyChanged += Ball_PositionedChanged;
+            }
+        }
+
+        private void UnsubscribeFromBalls()
+        {
+            if (_currentBalls != null)
+            {
+                foreach (var ball in _currentBalls)
+                {
+                    ball.PropertyChanged -= Ball_PositionedChanged;
+                }
             }
         }
 
@@ -35,17 +56,14 @@ namespace Logic
             }
         }
 
-        private void Ball_PositionedChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Ball_PositionedChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Ball.X) || e.PropertyName == nameof(Ball.Y))
+            if (e.PropertyName == nameof(IBall.X) || e.PropertyName == nameof(IBall.Y))
             {
-                var ball = sender as Ball;
-                if (ball == null) return;
+                if (sender is not IBall ball) return;
 
-                // Sekcja krytyczna - tylko jeden wątek naraz może liczyć kolizje
                 lock (_collisionLock)
                 {
-                    // Odbicia od ścian (szerokość kulki to 2 * Radius)
                     if (ball.X <= 0)
                     {
                         ball.VelX = Math.Abs(ball.VelX);
@@ -64,40 +82,33 @@ namespace Logic
                         ball.VelY = -Math.Abs(ball.VelY);
                     }
 
-                    // Odbicia od innych kul
                     CheckBallCollision(ball);
                 }
             }
         }
 
-        private void CheckBallCollision(Ball ball)
+        private void CheckBallCollision(IBall ball)
         {
-            foreach (var other in _dataApi.GetBalls())
+            foreach (var other in _currentBalls)
             {
-                if (other == ball) continue; // Nie sprawdzamy kolizji samej ze sobą
+                if (other == ball) continue;
 
-                // Prawdziwy środek kuli to: lewa krawędź + promień
                 double BallCenterX = ball.X + ball.Radius;
                 double BallCenterY = ball.Y + ball.Radius;
                 double OtherCenterX = other.X + other.Radius;
                 double OtherCenterY = other.Y + other.Radius;
 
-                // Obliczamy odległość między środkami kul (Twierdzenie Pitagorasa)
                 double dx = BallCenterX - OtherCenterX;
                 double dy = BallCenterY - OtherCenterY;
                 double distance = Math.Sqrt(dx * dx + dy * dy);
 
-                // Kulki stykają się, gdy odległość między środkami <= suma ich prawdziwych promieni!
                 if (distance <= (ball.Radius + other.Radius))
                 {
-                    // Sprawdzamy prędkość względną - ochrona przed wrażeniem sklejania się kul
                     double relativeVelX = ball.VelX - other.VelX;
                     double relativeVelY = ball.VelY - other.VelY;
 
-                    // Jeśli kule już się od siebie oddalają, nie licz kolizji ponownie
                     if ((dx * relativeVelX + dy * relativeVelY) >= 0) continue;
 
-                    // Zasada zachowania pędu
                     double oldVelX = ball.VelX;
                     double oldVelY = ball.VelY;
 
@@ -112,22 +123,22 @@ namespace Logic
 
         public override void StartSimulation()
         {
-            //Kulki same poruszają się w swoich metodach StartMoving, więc tutaj nie musimy nic robić
+            // Kulki same poruszają się w swoich metodach
         }
+
         public override void StopSimulation()
         {
-            foreach (var ball in _dataApi.GetBalls())
+            foreach (var ball in _currentBalls)
             {
-                ball.StopMoving(); // zatrzyma pętle while w klasie Ball
+                ball.StopMoving();
             }
 
             _dataApi.StopLogging();
         }
-        public override List<Ball> GetBalls()
-        {
-            return _dataApi.GetBalls();
-        }
-        
 
+        public override IList<IBall> GetBalls()
+        {
+            return _currentBalls;
+        }
     }
 }

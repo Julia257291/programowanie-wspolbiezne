@@ -10,12 +10,13 @@ namespace Presentation.Model
         private double _y;
         private double _radius;
 
-        public BallModel(Ball ball)
+        public BallModel(IBall ball)
         {
             this._x = ball.X;
             this._y = ball.Y;
             this._radius = ball.Radius;
 
+            // Zdarzenie PropertyChanged zadziała bez problemu, bo IBall po nim dziedziczy
             ball.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName == nameof(ball.X))
@@ -36,7 +37,7 @@ namespace Presentation.Model
             {
                 _x = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(RenderX)); 
+                OnPropertyChanged(nameof(RenderX));
             }
         }
 
@@ -68,6 +69,7 @@ namespace Presentation.Model
         public double RenderY => _y;
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

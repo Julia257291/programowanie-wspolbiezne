@@ -1,4 +1,5 @@
 ﻿using Logic;
+using Data;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,7 +25,8 @@ namespace Presentation.Model
             _logicApi.GenerateBalls(count, 760, 510);
             _ballsModels.Clear();
 
-            foreach (var ball in _logicApi.GetBalls())
+            // Teraz iterujemy po IBall
+            foreach (IBall ball in _logicApi.GetBalls())
             {
                 var newBallModel = new BallModel(ball);
                 _ballsModels.Add(newBallModel);

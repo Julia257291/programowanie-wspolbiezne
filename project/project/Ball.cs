@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Data
 {
-    public class Ball : INotifyPropertyChanged
+    public class Ball : IBall
     {
         private double _x;
         private double _y;
